@@ -103,14 +103,9 @@ public class PlayerMovement: MonoBehaviour
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
         }
 
-        if(moveDirection != Vector3.zero)
-        {
-            animator.SetBool("isMoving", true);
-        }
-        else
-        {
-            animator.SetBool("isMoving", false);
-        }
+        animator.SetFloat("vertical", Input.GetAxis("Vertical"));
+        animator.SetFloat("horizontal", Input.GetAxis("Horizontal"));
+        
     }
 
     private void SpeedControl()
