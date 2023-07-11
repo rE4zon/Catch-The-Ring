@@ -1,28 +1,40 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+using UnityEngine.SceneManagement;
 
 public class RingDetect : MonoBehaviour
 {
-    [SerializeField] TMP_Text scoreText;
-    [SerializeField] TMP_Text highscoreText;
-    
+    public event Action Finalized;
 
-    private float score;
+    [SerializeField] private float startingTime = 5f;
+    [SerializeField] public int maxScore = 5;
+
+    public float currentTime = 0f;
+    public int score;
     private float timer;
-    private float highscore;
+    public int highscore;
 
     private void Start()
     {
-        score = 0f;
+        Time.timeScale = 1f;
+        currentTime = startingTime;
+        score = 0;
         timer = 0f;
-        highscore = 0f;
+        highscore = 0;
         
-        scoreText.text = score.ToString() + " POINTS";
-        highscoreText.text = "HIGHSCORE: " + highscore.ToString();
-        highscore = PlayerPrefs.GetFloat("highscore", 0);
+        highscore = PlayerPrefs.GetInt("highscore", 0);
+    }
+
+    private void Update()
+    {
+        currentTime -= 1 * Time.deltaTime;
+      
+        if (currentTime <= 0)
+        {
+            currentTime = 0;
+
+            Final();
+        }
     }
 
     private void OnTriggerStay(Collider other)
@@ -37,27 +49,32 @@ public class RingDetect : MonoBehaviour
             }
         }
 
-        if (score >= 100)
+        if (score >= maxScore)
         {
-            EndGame();
+            Final();
         }
     }
 
     private void AddPoint()
     {
         score += 1;
-        scoreText.text = score.ToString() + " POINTS";
 
-        if(highscore < score)
+        if (highscore < score)
         {
-            PlayerPrefs.SetFloat("highscore", score);
+            PlayerPrefs.SetInt("highscore", score);
         }
     }
 
-    private void EndGame()
+    public void RestartGame()
     {
-        
-        Debug.Log("Game Over");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    private void Final()
+    {
+        Finalized.Invoke();
+
+        Time.timeScale = 0f;
+    }
 }
+

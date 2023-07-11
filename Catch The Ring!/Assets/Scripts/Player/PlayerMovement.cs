@@ -28,6 +28,7 @@ public class PlayerMovement: MonoBehaviour
     [Header("Camera")]
     [SerializeField] private Transform cameraTransform;
 
+    [SerializeField] private Animator animator;
 
     float horizontalInput;
     float verticalInput;
@@ -53,6 +54,7 @@ public class PlayerMovement: MonoBehaviour
         SpeedControl();
 
         
+        
         if (grounded)
         {
             rb.drag = groundDrag;
@@ -61,6 +63,7 @@ public class PlayerMovement: MonoBehaviour
         {
             rb.drag = 0;
         }
+
     }
 
     private void FixedUpdate()
@@ -98,6 +101,15 @@ public class PlayerMovement: MonoBehaviour
         else if (!grounded)
         {
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+        }
+
+        if(moveDirection != Vector3.zero)
+        {
+            animator.SetBool("isMoving", true);
+        }
+        else
+        {
+            animator.SetBool("isMoving", false);
         }
     }
 
