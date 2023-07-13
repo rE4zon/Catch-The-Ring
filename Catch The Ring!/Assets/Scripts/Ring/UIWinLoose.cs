@@ -42,6 +42,7 @@ public class UIWinLoose : MonoBehaviour
 
             yield return null;
         }
+        Cursor.lockState = CursorLockMode.None;
 
         canvasGroup.alpha = 1f;
     }
