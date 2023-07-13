@@ -14,7 +14,7 @@ public class PlayerMovement: MonoBehaviour
     [SerializeField] private float jumpCooldown;
     [SerializeField] private float airMultiplier;
     bool readyToJump;
-
+    private Animator anim;
     
 
     [Header("Keybinds")]
@@ -39,9 +39,10 @@ public class PlayerMovement: MonoBehaviour
 
     private void Start()
     {
+        anim = GetComponentInChildren<Animator>();
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
-
+        
         readyToJump = true;
     }
 
@@ -89,7 +90,6 @@ public class PlayerMovement: MonoBehaviour
 
     private void MovePlayer()
     {
-
         moveDirection = cameraTransform.forward * verticalInput + cameraTransform.right * horizontalInput;
 
         if (grounded)
@@ -103,8 +103,8 @@ public class PlayerMovement: MonoBehaviour
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
         }
 
-        animator.SetFloat("vertical", Input.GetAxis("Vertical"));
-        animator.SetFloat("horizontal", Input.GetAxis("Horizontal"));
+        anim.SetFloat("Speed", 1f, 0.1f, Time.deltaTime);
+        
         
     }
 
@@ -122,7 +122,7 @@ public class PlayerMovement: MonoBehaviour
 
     private void Jump()
     {
-        
+        anim.SetBool("isJumping", true);
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
         rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
@@ -130,5 +130,10 @@ public class PlayerMovement: MonoBehaviour
     private void ResetJump()
     {
         readyToJump = true;
+    }
+
+    private void Idle()
+    {
+        anim.SetFloat("Speed", 0f, 0.1f, Time.deltaTime);
     }
 }
